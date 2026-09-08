@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node --check \"c:/Users/Cleyson Breno/Desktop/Projeto/controlesalgado/frontend/js/compras.js\")",
+      "Bash(python -c \"import ast; ast.parse\\(open\\(r'c:/Users/Cleyson Breno/Desktop/Projeto/controlesalgado/app.py',encoding='utf-8'\\).read\\(\\)\\); ast.parse\\(open\\(r'c:/Users/Cleyson Breno/Desktop/Projeto/controlesalgado/database.py',encoding='utf-8'\\).read\\(\\)\\); print\\('PY OK'\\)\")",
+      "Bash(node --check \"c:/Users/Cleyson Breno/Desktop/Projeto/controlesalgado/frontend/js/dashboard.js\")",
+      "Bash(node --check \"c:/Users/Cleyson Breno/Desktop/Projeto/controlesalgado/frontend/js/app.js\")",
+      "Bash(node --check \"c:/Users/Cleyson Breno/Desktop/Projeto/controlesalgado/frontend/js/theme.js\")",
+      "Bash(node --check frontend/js/app.js)",
+      "Bash(node --check frontend/js/dashboard.js)",
+      "Bash(python -c \"import ast; [ast.parse\\(open\\(f,encoding='utf-8'\\).read\\(\\)\\) for f in ['app.py','database.py']]; print\\('PY syntax OK'\\)\")",
+      "Bash(node --check frontend/js/produtos.js)",
+      "Bash(python -c ' *)"
+    ]
+  }
+}

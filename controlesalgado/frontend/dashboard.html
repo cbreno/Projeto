@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Controle de salgado</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <script src="/js/theme.js"></script>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div>
+      <h1>📊 Dashboard</h1>
+      <p class="subtitle">Visão geral de vendas, lucro e gastos</p>
+    </div>
+    <div class="header-actions">
+      <a class="btn-back" href="/">← Voltar</a>
+      <button class="btn-theme" id="btnTheme" type="button">🌙</button>
+    </div>
+  </div>
+
+  <!-- FILTRO DE PERÍODO -->
+  <div class="card">
+    <div class="period-bar">
+      <div class="period-presets">
+        <button class="period-btn" data-period="7">Últimos 7 dias</button>
+        <button class="period-btn" data-period="30">Últimos 30 dias</button>
+        <button class="period-btn active" data-period="all">Tudo</button>
+      </div>
+      <div class="period-range">
+        <input type="date" id="periodFrom" aria-label="Data inicial" />
+        <span>até</span>
+        <input type="date" id="periodTo" aria-label="Data final" />
+        <button class="btn-primary" id="periodApply">Aplicar</button>
+      </div>
+    </div>
+    <p class="period-label" id="periodLabel"></p>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-grid" id="kpiGrid"></div>
+
+  <!-- GRÁFICOS POR DIA -->
+  <div class="card">
+    <h2>Quantidade vendida por dia</h2>
+    <div class="chart" id="chartQty"></div>
+  </div>
+
+  <div class="card">
+    <h2>Faturamento por dia</h2>
+    <div class="chart" id="chartValue"></div>
+  </div>
+
+  <div class="card">
+    <h2>Lucro por dia</h2>
+    <div class="chart" id="chartProfit"></div>
+  </div>
+
+  <div class="card">
+    <h2>Vendas x Gastos por dia</h2>
+    <div class="chart-legend">
+      <span><i class="dot dot-sales"></i> Vendas</span>
+      <span><i class="dot dot-expense"></i> Gastos</span>
+    </div>
+    <div class="chart" id="chartSalesExpense"></div>
+  </div>
+
+  <!-- RANKING DE PESSOAS -->
+  <div class="card">
+    <h2>Ranking de clientes</h2>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Cliente</th>
+            <th>Qtd</th>
+            <th>Total</th>
+            <th>% do faturamento</th>
+          </tr>
+        </thead>
+        <tbody id="rankingBody"></tbody>
+      </table>
+      <p class="empty-msg" id="rankingEmpty" style="display:none;">Nenhum lançamento ainda.</p>
+    </div>
+  </div>
+
+  <!-- FECHAMENTO MENSAL -->
+  <div class="card">
+    <h2>Fechamento mensal <span class="muted-note">(todos os meses)</span></h2>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Mês</th>
+            <th>Qtd</th>
+            <th>Faturamento</th>
+            <th>Lucro bruto</th>
+            <th>Gastos</th>
+            <th>Lucro líquido</th>
+          </tr>
+        </thead>
+        <tbody id="monthlyBody"></tbody>
+      </table>
+      <p class="empty-msg" id="monthlyEmpty" style="display:none;">Sem dados ainda.</p>
+    </div>
+  </div>
+</div>
+
+<script src="/js/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Controle de Cobranças</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <script src="/js/theme.js"></script>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div>
+      <h1>Controle de salgado</h1>
+      <p class="subtitle">Registre compras de salgado e acompanhe o total de cada pessoa</p>
+    </div>
+    <div class="header-actions">
+      <a class="btn-produtos" href="/produtos.html">⚙️ Produtos</a>
+      <a class="btn-compras" href="/compras.html">🛒 Compras</a>
+      <a class="btn-dash" href="/dashboard.html">📊 Dashboard</a>
+      <button class="btn-theme" id="btnTheme" type="button">🌙</button>
+    </div>
+  </div>
+
+  <!-- RESUMO GLOBAL -->
+  <div class="summary-bar">
+    <div class="stat">
+      <div class="stat-label">Total Geral</div>
+      <div class="stat-value green" id="statTotal">R$ 0,00</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">A Receber</div>
+      <div class="stat-value red" id="statPending">R$ 0,00</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Quantidade</div>
+      <div class="stat-value blue" id="statCount">0</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Lucro</div>
+      <div class="stat-value green" id="statProfit">R$ 0,00</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Pessoas</div>
+      <div class="stat-value blue" id="statPeople">0</div>
+    </div>
+  </div>
+
+  <!-- FORMULÁRIO -->
+  <div class="card">
+    <h2>Novo Lançamento</h2>
+    <div class="form-row form-row-lancamento">
+      <div class="field">
+        <label for="inputName">Pessoa</label>
+        <input id="inputName" type="text" placeholder="Nome da pessoa" list="namesSuggestions" autocomplete="off" />
+        <datalist id="namesSuggestions"></datalist>
+      </div>
+      <div class="field">
+        <label for="inputProduct">Produto</label>
+        <select id="inputProduct"></select>
+      </div>
+      <div class="field field-qty">
+        <label for="inputQty">Qtd</label>
+        <input id="inputQty" type="number" min="1" step="1" value="1" placeholder="1" />
+      </div>
+      <div class="field">
+        <label for="inputDate">Data</label>
+        <input id="inputDate" type="date" />
+      </div>
+      <div class="field">
+        <label>Valor</label>
+        <input id="valueDisplay" type="text" value="—" disabled />
+      </div>
+      <button class="btn-primary" id="btnAdd">+ Adicionar</button>
+    </div>
+    <p class="form-error" id="formError"></p>
+  </div>
+
+  <!-- PAINEL DE PESSOAS -->
+  <div class="card">
+    <h2>Painel por Pessoa <span id="panelSubtitle" style="font-size:0.75rem;margin-left:6px;">(clique para filtrar)</span></h2>
+    <div class="totals-grid" id="totalsGrid">
+      <p class="empty-msg">Nenhum lançamento ainda.</p>
+    </div>
+  </div>
+
+  <!-- LISTA DE LANÇAMENTOS -->
+  <div class="card">
+    <h2>Lançamentos</h2>
+    <div class="filter-bar">
+      <input id="searchInput" type="text" placeholder="Buscar por nome..." />
+      <button class="clear-filter" id="btnClearFilter">Limpar filtro</button>
+    </div>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th data-sort="name" id="th-name">Pessoa <span class="sort-icon">↕</span></th>
+            <th data-sort="product" id="th-product">Produto <span class="sort-icon">↕</span></th>
+            <th data-sort="quantity" id="th-quantity">Qtd <span class="sort-icon">↕</span></th>
+            <th data-sort="amount" id="th-amount">Valor <span class="sort-icon">↕</span></th>
+            <th data-sort="date" id="th-date">Data <span class="sort-icon">↕</span></th>
+            <th data-sort="paid" id="th-paid">Status <span class="sort-icon">↕</span></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+      <p class="empty-msg" id="emptyTableMsg" style="display:none;">Nenhum lançamento encontrado.</p>
+    </div>
+  </div>
+
+  <!-- DADOS / BACKUP -->
+  <div class="card">
+    <h2>Dados e Backup</h2>
+    <div class="data-actions">
+      <button class="btn-outline" id="btnExportCsv">⬇ Exportar CSV</button>
+      <button class="btn-outline" id="btnPrintList">🖨 Imprimir lista</button>
+      <a class="btn-outline" href="/api/backup">💾 Baixar backup (.db)</a>
+      <button class="btn-outline" id="btnRestore">📂 Restaurar backup</button>
+      <input type="file" id="restoreFile" accept=".db,.sqlite,.sqlite3" hidden />
+    </div>
+    <p class="data-hint">O CSV abre no Excel. A restauração substitui todos os dados atuais pelo arquivo enviado.</p>
+  </div>
+</div>
+
+<!-- MODAL DETALHE PESSOA -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3 id="modalTitle">Detalhe</h3>
+    <ul class="modal-list" id="modalList"></ul>
+    <div class="modal-total">
+      <span>Total</span>
+      <span id="modalTotal"></span>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="btnCloseModal">Fechar</button>
+      <button class="btn-outline" id="btnReceipt">🖨 Recibo</button>
+      <button class="btn-whatsapp" id="btnWhatsapp">💬 Cobrar no WhatsApp</button>
+      <button class="btn-success" id="btnTogglePaidAll">✓ Marcar tudo pago</button>
+      <button class="btn-danger" id="btnClearPerson" title="Apaga os lançamentos e mantém a pessoa na lista">Zerar pessoa</button>
+      <button class="btn-danger" id="btnDeletePerson" title="Remove a pessoa da lista, junto com os lançamentos">🗑 Excluir pessoa</button>
+    </div>
+  </div>
+</div>
+
+<script src="/js/app.js"></script>
+</body>
+</html>

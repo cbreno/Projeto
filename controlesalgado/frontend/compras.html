@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Compras — Controle de salgado</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <script src="/js/theme.js"></script>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div>
+      <h1>🛒 Compras</h1>
+      <p class="subtitle">Registre os produtos comprados e seus valores</p>
+    </div>
+    <div class="header-actions">
+      <a class="btn-back" href="/">← Voltar</a>
+      <button class="btn-theme" id="btnTheme" type="button">🌙</button>
+    </div>
+  </div>
+
+  <!-- RESUMO -->
+  <div class="summary-bar">
+    <div class="stat">
+      <div class="stat-label">Total Gasto</div>
+      <div class="stat-value red" id="statTotal">R$ 0,00</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Compras</div>
+      <div class="stat-value blue" id="statCount">0</div>
+    </div>
+  </div>
+
+  <!-- FORMULÁRIO -->
+  <div class="card">
+    <h2>Nova Compra</h2>
+    <div class="form-row form-row-compras">
+      <div class="field">
+        <label for="inputProduct">Produto</label>
+        <input id="inputProduct" type="text" placeholder="Nome do produto" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label for="inputAmount">Valor (R$)</label>
+        <input id="inputAmount" type="number" min="0.01" step="0.01" placeholder="0,00" />
+      </div>
+      <div class="field">
+        <label for="inputDate">Data</label>
+        <input id="inputDate" type="date" />
+      </div>
+      <button class="btn-primary" id="btnAdd">+ Adicionar</button>
+    </div>
+    <p class="form-error" id="formError"></p>
+  </div>
+
+  <!-- LISTA DE COMPRAS -->
+  <div class="card">
+    <h2>Compras Registradas</h2>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Produto</th>
+            <th>Valor</th>
+            <th>Data</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+      <p class="empty-msg" id="emptyTableMsg" style="display:none;">Nenhuma compra registrada.</p>
+    </div>
+  </div>
+</div>
+
+<script src="/js/compras.js"></script>
+</body>
+</html>

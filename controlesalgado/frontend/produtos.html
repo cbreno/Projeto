@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Produtos — Controle de salgado</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <script src="/js/theme.js"></script>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div>
+      <h1>⚙️ Produtos</h1>
+      <p class="subtitle">Cadastre itens com preço e lucro por unidade</p>
+    </div>
+    <div class="header-actions">
+      <a class="btn-back" href="/">← Voltar</a>
+      <button class="btn-theme" id="btnTheme" type="button">🌙</button>
+    </div>
+  </div>
+
+  <!-- FORMULÁRIO -->
+  <div class="card">
+    <h2 id="formTitle">Novo Produto</h2>
+    <div class="form-row form-row-produto">
+      <div class="field">
+        <label for="inputName">Produto</label>
+        <input id="inputName" type="text" placeholder="Ex.: Coxinha" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label for="inputPrice">Preço de venda (R$)</label>
+        <input id="inputPrice" type="number" min="0" step="0.01" placeholder="0,00" />
+      </div>
+      <div class="field">
+        <label for="inputProfit">Lucro por unidade (R$)</label>
+        <input id="inputProfit" type="number" min="0" step="0.01" placeholder="0,00" />
+      </div>
+      <button class="btn-primary" id="btnSave">+ Adicionar</button>
+      <button class="btn-ghost" id="btnCancelEdit" style="display:none;">Cancelar</button>
+    </div>
+    <p class="form-error" id="formError"></p>
+  </div>
+
+  <!-- LISTA -->
+  <div class="card">
+    <h2>Catálogo</h2>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Produto</th>
+            <th>Preço</th>
+            <th>Lucro/un.</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+      <p class="empty-msg" id="emptyMsg" style="display:none;">Nenhum produto cadastrado.</p>
+    </div>
+  </div>
+</div>
+
+<script src="/js/produtos.js"></script>
+</body>
+</html>
