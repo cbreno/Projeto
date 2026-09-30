@@ -109,7 +109,6 @@ async function addEntry() {
 
   document.getElementById("inputName").value = "";
   document.getElementById("inputQty").value  = "1";
-  setDateToday();
   await loadEntries();
 }
 
@@ -139,6 +138,13 @@ async function clearPerson() {
   await fetch(`${API}/person/${encodeURIComponent(name)}`, { method: "DELETE" });
   await loadEntries();
   openModal(name);            // pessoa segue na lista, agora zerada
+}
+
+async function clearPaid() {
+  if (!confirm("Zerar todos os lançamentos pagos?\n\nEles serão apagados de vez (inclusive do dashboard). Faça um backup antes se quiser guardar o histórico.")) return;
+  const res = await fetch(`${API}/paid`, { method: "DELETE" });
+  alert((await res.json()).message);
+  await loadEntries();
 }
 
 async function deletePerson() {
@@ -577,6 +583,7 @@ document.getElementById("restoreFile").addEventListener("change", e => {
 document.getElementById("btnCloseModal").addEventListener("click", closeModalDirect);
 document.getElementById("btnClearPerson").addEventListener("click", clearPerson);
 document.getElementById("btnDeletePerson").addEventListener("click", deletePerson);
+document.getElementById("btnClearPaid").addEventListener("click", clearPaid);
 
 document.getElementById("btnWhatsapp").addEventListener("click", () => {
   if (modalPerson) sendWhatsapp(modalPerson);

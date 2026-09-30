@@ -1,10 +1,25 @@
-from flask import Flask, jsonify, request, send_file
+from flask import Flask, Response, jsonify, request, send_file
 from datetime import datetime
+import hmac
+import os
 import sqlite3
 import database as db
 
 app = Flask(__name__, static_folder="frontend", static_url_path="")
 db.init_db()
+
+# Senha de acesso (obrigatória quando hospedado). Sem a variável, fica aberto (uso local).
+APP_PASSWORD = os.environ.get("APP_PASSWORD")
+
+
+@app.before_request
+def require_password():
+    if not APP_PASSWORD:
+        return
+    auth = request.authorization
+    if auth and hmac.compare_digest((auth.password or "").encode(), APP_PASSWORD.encode()):
+        return
+    return Response("Senha necessária.", 401, {"WWW-Authenticate": 'Basic realm="Controle de salgado"'})
 
 
 # Serve o front end
@@ -66,6 +81,13 @@ def create_entry():
 def delete_entry(entry_id):
     db.delete_by_id(entry_id)
     return jsonify({"message": "Lançamento removido."})
+
+
+@app.route("/api/entries/paid", methods=["DELETE"])
+def clear_paid_entries():
+    """Zera os pagos: apaga todos os lançamentos já pagos."""
+    count = db.delete_paid()
+    return jsonify({"message": f"{count} lançamento(s) pago(s) removido(s).", "count": count})
 
 
 @app.route("/api/entries/<int:entry_id>/paid", methods=["PUT"])

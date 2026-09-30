@@ -39,6 +39,7 @@ All pages share [frontend/css/style.css](frontend/css/style.css).
 | GET/POST | `/api/entries` | POST needs `name`, `product_id`, `quantity`, optional `date` |
 | DELETE | `/api/entries/<id>` | |
 | PUT | `/api/entries/<id>/paid` | body `{paid: bool}` |
+| DELETE | `/api/entries/paid` | "Zerar pagos": wipes every paid entry, keeps people registered |
 | DELETE / PUT | `/api/entries/person/<name>` , `/api/entries/person/<name>/paid` | bulk by person; DELETE = "zerar" (wipes entries, keeps the person registered) |
 | GET/POST/PUT/DELETE | `/api/products` , `/api/products/<id>` | `name`, `price`, `profit`, `active` |
 | GET/POST/DELETE | `/api/purchases` , `/api/purchases/<id>` | `product`, `amount`, `date` |

@@ -104,6 +104,13 @@ def delete_by_person(name):
         conn.execute("DELETE FROM entries WHERE LOWER(name) = LOWER(?)", (name,))
 
 
+def delete_paid():
+    """Apaga todos os lançamentos pagos; as pessoas continuam cadastradas."""
+    with get_conn() as conn:
+        conn.execute("INSERT OR IGNORE INTO people (name, phone) SELECT DISTINCT name, '' FROM entries WHERE paid = 1")
+        return conn.execute("DELETE FROM entries WHERE paid = 1").rowcount
+
+
 def set_paid(entry_id, paid):
     with get_conn() as conn:
         conn.execute("UPDATE entries SET paid = ? WHERE id = ?", (1 if paid else 0, entry_id))

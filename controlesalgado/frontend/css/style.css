@@ -150,6 +150,14 @@ h1 {
 
 @media (max-width: 640px) {
   .form-row { grid-template-columns: 1fr; }
+  body { padding: 16px 12px 48px; }
+  .card { padding: 16px; }
+  .header-actions { justify-content: center; }
+  .stat { min-width: 130px; padding: 14px; }
+  .modal { padding: 20px; max-height: 90vh; }
+  .modal-actions > * { flex: 1 1 auto; }
+  /* iOS dá zoom automático em campos com fonte < 16px */
+  input, select { font-size: 16px; }
 }
 
 .field { display: flex; flex-direction: column; gap: 6px; }
