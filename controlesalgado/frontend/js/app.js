@@ -24,10 +24,14 @@ function fmtDate(iso) {
   return d.toLocaleDateString("pt-BR") + " " + d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
 }
 
-function setDateToday() {
+function initDate() {
+  const input = document.getElementById("inputDate");
   const d = new Date();
-  const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
-  document.getElementById("inputDate").value = local.toISOString().slice(0, 10);
+  const today = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  // A chave leva o dia de hoje: a data escolhida sobrevive a recarregar, mas não vale para o dia seguinte.
+  const key = `dataLancamento:${today}`;
+  input.value = sessionStorage.getItem(key) || today;
+  input.addEventListener("change", () => sessionStorage.setItem(key, input.value));
 }
 
 function showError(msg) {
@@ -97,7 +101,7 @@ async function addEntry() {
   const res = await fetch(API, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, product_id: prod.id, quantity: qty, date }),
+    body: JSON.stringify({ name, product_id: prod.id, quantity: qty, date, tz_offset: new Date().getTimezoneOffset() }),
   });
 
   btn.disabled = false;
@@ -621,5 +625,5 @@ document.getElementById("inputProduct").addEventListener("change", updateValueDi
 document.getElementById("inputQty").addEventListener("input", updateValueDisplay);
 
 // ── Init ──────────────────────────────────────────────────────────────────────
-setDateToday();
+initDate();
 loadEntries();

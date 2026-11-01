@@ -13,7 +13,7 @@ pip install -r requirements.txt   # only dependency is Flask
 python app.py                     # http://localhost:5000, debug mode on
 ```
 
-There is no build step, no bundler, and no automated test suite. The frontend is plain HTML/CSS/vanilla JS served directly by Flask. To smoke-test backend changes without a browser, use the Flask test client:
+There is no build step, no bundler, and no test suite beyond `python test_dates.py`. The frontend is plain HTML/CSS/vanilla JS served directly by Flask. To smoke-test backend changes without a browser, use the Flask test client:
 
 ```bash
 python -c "import app; c=app.app.test_client(); print(c.get('/api/entries').get_json())"
@@ -36,13 +36,13 @@ All pages share [frontend/css/style.css](frontend/css/style.css).
 
 | Method | Route | Notes |
 |--------|-------|-------|
-| GET/POST | `/api/entries` | POST needs `name`, `product_id`, `quantity`, optional `date` |
+| GET/POST | `/api/entries` | POST needs `name`, `product_id`, `quantity`, optional `date` + `tz_offset` |
 | DELETE | `/api/entries/<id>` | |
 | PUT | `/api/entries/<id>/paid` | body `{paid: bool}` |
 | DELETE | `/api/entries/paid` | "Zerar pagos": wipes every paid entry, keeps people registered |
 | DELETE / PUT | `/api/entries/person/<name>` , `/api/entries/person/<name>/paid` | bulk by person; DELETE = "zerar" (wipes entries, keeps the person registered) |
 | GET/POST/PUT/DELETE | `/api/products` , `/api/products/<id>` | `name`, `price`, `profit`, `active` |
-| GET/POST/DELETE | `/api/purchases` , `/api/purchases/<id>` | `product`, `amount`, `date` |
+| GET/POST/DELETE | `/api/purchases` , `/api/purchases/<id>` | `product`, `amount`, `date`, `tz_offset` |
 | GET/POST | `/api/people` | POST needs `name`; registers a person with no entries |
 | DELETE | `/api/people/<name>` | removes the person **and** their entries ("excluir pessoa") |
 | PUT | `/api/people/<name>/phone` | phones matched to entries case-insensitively |
@@ -59,7 +59,7 @@ All pages share [frontend/css/style.css](frontend/css/style.css).
 
 - **Tables:** `entries(id, name, product, quantity, unit_price, unit_profit, amount, date, paid)`, `products(id, name UNIQUE NOCASE, price, profit, active)`, `purchases(id, product, amount, date)`, `people(name PK NOCASE, phone)`. `date` is an ISO timestamp.
 
-- **Dates are stored as naive UTC** (`datetime.utcnow().isoformat()`, no `Z`). The frontend's `dayKey`/`fmtDate` append `Z` when missing and shift by the local timezone offset to derive the local calendar day — used for day/month grouping in the dashboard. Preserve this convention when adding date logic. (`utcnow` is deprecated but kept for consistency across the codebase.)
+- **Dates are stored as naive UTC** (`datetime.utcnow().isoformat()`, no `Z`). The frontend's `dayKey`/`fmtDate` append `Z` when missing and shift by the local timezone offset to derive the local calendar day — used for day/month grouping in the dashboard. A picked `date` is a local calendar day: `_resolve_date` in [app.py](app.py) combines it with the current local time using the browser's `tz_offset`, then converts to UTC. Preserve this convention when adding date logic. (`utcnow` is deprecated but kept for consistency across the codebase.)
 
 - **No client-side libraries.** Charts are hand-rolled inline SVG (`renderBarChart`/`renderGroupedChart` in [dashboard.js](frontend/js/dashboard.js)); CSV export, printable receipts/reports, and "save as PDF" are generated client-side (`exportCSV`, `openPrintWindow` → `window.print()` in [app.js](frontend/js/app.js)). The WhatsApp charge link is built in-browser as a `wa.me` URL, stripping non-digits and prepending `55` (Brazil). Keep new features dependency-free and offline-friendly to match this.
 

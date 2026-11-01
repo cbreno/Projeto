@@ -1,5 +1,5 @@
 from flask import Flask, Response, jsonify, request, send_file
-from datetime import datetime
+from datetime import datetime, timedelta
 import hmac
 import os
 import sqlite3
@@ -20,6 +20,23 @@ def require_password():
     if auth and hmac.compare_digest((auth.password or "").encode(), APP_PASSWORD.encode()):
         return
     return Response("Senha necessária.", 401, {"WWW-Authenticate": 'Basic realm="Controle de salgado"'})
+
+
+def _resolve_date(data, now=None):
+    """Timestamp UTC ingênuo da data escolhida (dia local) com a hora atual; None se inválida."""
+    now = now or datetime.utcnow()
+    date_str = (data.get("date") or "").strip()
+    if not date_str:
+        return now.isoformat()
+    try:
+        minutes = int(data.get("tz_offset") or 0)   # Date.getTimezoneOffset() do navegador
+        if abs(minutes) > 840:
+            return None
+        offset = timedelta(minutes=minutes)
+        picked = datetime.strptime(date_str, "%Y-%m-%d")
+        return (datetime.combine(picked, (now - offset).time()) + offset).isoformat()
+    except (TypeError, ValueError, OverflowError):
+        return None
 
 
 # Serve o front end
@@ -54,19 +71,9 @@ def create_entry():
     if not product:
         return jsonify({"error": "Selecione um produto válido."}), 400
 
-    # Data escolhida (YYYY-MM-DD) combinada com a hora atual; senão, agora.
-    now = datetime.utcnow()
-    date_str = (data.get("date") or "").strip()
-    if date_str:
-        try:
-            picked = datetime.strptime(date_str, "%Y-%m-%d")
-            date_iso = picked.replace(
-                hour=now.hour, minute=now.minute, second=now.second, microsecond=now.microsecond
-            ).isoformat()
-        except ValueError:
-            return jsonify({"error": "Data inválida."}), 400
-    else:
-        date_iso = now.isoformat()
+    date_iso = _resolve_date(data)
+    if date_iso is None:
+        return jsonify({"error": "Data inválida."}), 400
 
     db.register_person(name)   # mantém a pessoa na lista mesmo se zerar os lançamentos
 
@@ -134,18 +141,9 @@ def create_purchase():
     if amount <= 0:
         return jsonify({"error": "Valor deve ser maior que zero."}), 400
 
-    now = datetime.utcnow()
-    date_str = (data.get("date") or "").strip()
-    if date_str:
-        try:
-            picked = datetime.strptime(date_str, "%Y-%m-%d")
-            date_iso = picked.replace(
-                hour=now.hour, minute=now.minute, second=now.second, microsecond=now.microsecond
-            ).isoformat()
-        except ValueError:
-            return jsonify({"error": "Data inválida."}), 400
-    else:
-        date_iso = now.isoformat()
+    date_iso = _resolve_date(data)
+    if date_iso is None:
+        return jsonify({"error": "Data inválida."}), 400
 
     purchase_id = db.insert_purchase(product, amount, date_iso)
     return jsonify({"id": purchase_id, "message": "Compra registrada."}), 201
