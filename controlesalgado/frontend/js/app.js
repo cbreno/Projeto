@@ -196,9 +196,14 @@ function buildChargeMessage(name) {
     .sort((a, b) => new Date(a.date) - new Date(b.date));
 
   const total = pendentes.reduce((s, e) => s + e.amount, 0);
-  const totalQtd = pendentes.reduce((s, e) => s + e.quantity, 0);
+  const porProduto = {};
+  pendentes.forEach(e => {
+    const p = e.product || "Salgado";
+    porProduto[p] = (porProduto[p] || 0) + e.quantity;
+  });
+  const itens = Object.entries(porProduto).map(([p, q]) => `${p}: ${q} un.`).join("\n");
 
-  return `Olá!\n\nReferente aos salgados do mês:\n\n*${totalQtd} un. — ${fmt(total)}*\n\nChave Pix: falcaogremiosalgado@gmail.com\n\nObrigado!`;
+  return `Olá!\n\nReferente aos salgados/cocas do mês:\n\n${itens}\n\n*Total: ${fmt(total)}*\n\nChave Pix: falcaogremiosalgado@gmail.com\n\nObrigado!`;
 }
 
 function sendWhatsapp(name) {
